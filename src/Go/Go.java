@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class Go {
     //Пусть к папке данного проета
-    public static String PATH = "C://hUsers/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
+    public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
 
     private static String fileNameofBoard = PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
     private static String fileNameofHelp =  PATH+"\\src\\help.txt";

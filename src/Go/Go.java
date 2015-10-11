@@ -64,6 +64,7 @@ public class Go {
                 int y = read.nextInt();
                 System.out.println();
                 move(color, x, y);
+                //Думаю, что со цветом можно получше здесь сделать
             }
         }
     }
@@ -72,7 +73,13 @@ public class Go {
         //Проверка корректности хода есть ли там даме и условие ко-борьбы
         //Снятие камней противоположного цвета у которых нет дамэ
         //Изменение доски
-        System.out.print(x+" "+y);
+        if (board[x][y] != EMPTY) {
+            System.out.println("This point is occupied!");
+        } else {
+            board[x][y] = color;//
+            System.out.println(x+" "+y);
+        }
+
     }
 
     public static void print() {
@@ -83,6 +90,7 @@ public class Go {
             System.out.println();
         }
     }
+
     public static void DFS() {
         //Если группа камней не иммет даме, то удаляем.
     }

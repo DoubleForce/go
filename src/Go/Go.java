@@ -17,9 +17,20 @@ import java.util.regex.Pattern;
 
     Запустив програамму введи help
  */
+
+//Методы с большой буквы?
+//Разобраться с public, private.
+//Бегать по массив только с помощью (x, y) или (x1, y1).
+//Не писать 20, есть константа Board_size
+//Integer нельзя передать по ссылке?
+//При неправильном вводе хода программа прерывается.
+
+
 public class Go {
     //Пусть к папке данного проета
    // public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
+
+
 
     private static String fileNameofBoard = "src/board.txt"; //PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
     private static String fileNameofHelp =  "src/help.txt"; //PATH+"\\src\\help.txt";
@@ -36,6 +47,7 @@ public class Go {
         board = FileWorker.transferBoard(fileNameofBoard);
         commandLine();
     }
+
 
     public static void commandLine() throws IOException{ //Командная строка
         Scanner sc = new Scanner(System.in);
@@ -69,6 +81,10 @@ public class Go {
         }
     }
 
+    static class MyInteger{
+        int value;
+    }
+
     public static void move(int color,int x,int y){
         //Проверка корректности хода есть ли там даме и условие ко-борьбы
         //Снятие камней противоположного цвета у которых нет дамэ
@@ -77,21 +93,70 @@ public class Go {
             System.out.println("This point is occupied!");
         } else {
             board[x][y] = color;//
-            System.out.println(x+" "+y);
+            System.out.println(x + " " + y);
+        }
+
+        int label = 3;
+        //Нужно что - нибудь сделать с этим: cnt = 3?
+
+        int [][]  boardBuffer = new int[20][20];
+        for (int i = 1; i <= BOARD_SIZE; ++i) {
+            for (int j = 1; j <= BOARD_SIZE; ++j) {
+                boardBuffer[i][j] = board[i][j];
+            }
+        }
+
+
+        for (int i = 1; i <= BOARD_SIZE; ++i) {
+            for (int j = 1; j <= BOARD_SIZE; ++j) {
+                if (boardBuffer[i][j] == (color % 2) + 1) {
+                    MyInteger dameCount = new MyInteger();
+                    dameCount.value = 0;
+                    DFS(i, j, label, (color % 2) + 1, dameCount, boardBuffer);
+                    if (dameCount.value == 0) {
+                        DeleteStones(boardBuffer, label);
+                    }
+                    ++label;
+                }
+            }
         }
 
     }
 
     public static void print() {
-        for (int i = 1; i <= BOARD_SIZE; ++i) {
+        for (int i = BOARD_SIZE; i>= 1; --i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
-                System.out.print(board[i][j]+" ");
+                System.out.print(board[j][i]+" ");
             }
             System.out.println();
         }
     }
 
-    public static void DFS() {
+    private static void DFS(int x, int y, int label, int color, MyInteger dameCount, int[][] boardBuffer) {
+        boardBuffer[x][y] = label;
+        final int[] dx = {1, 0, -1, 0};
+        final int[] dy = {0, -1, 0, 1};
+        for (int k = 0; k <= 3; ++k) {
+            int x1 = x + dx[k];
+            int y1 = y + dy[k];
+            if (1 <= x1 && x1 <= 19 && 1 <= y1 && y1 <= 19) {
+                if (boardBuffer[x1][y1] == color) {
+                    DFS(x1, y1, label, color, dameCount, boardBuffer);
+                } else if (boardBuffer[x1][y1] == EMPTY) {
+                    dameCount.value = dameCount.value + 1;
+                }
+            }
+        }
         //Если группа камней не иммет даме, то удаляем.
+    }
+
+    private static void DeleteStones(int[][] boardBuffer, int label) {
+        for (int i = 1; i <= BOARD_SIZE; ++i) {
+            for (int j = 1; j <= BOARD_SIZE; ++j) {
+                if (boardBuffer[i][j] == label) {
+                    board[i][j] = EMPTY;
+                }
+            }
+        }
     }
 }

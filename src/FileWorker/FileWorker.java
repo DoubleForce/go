@@ -20,8 +20,8 @@ public class FileWorker {
             Scanner sc = new Scanner(new FileReader(file.getAbsoluteFile()));
             try {
                 //В цикле построчно считываем файл
-                for(int i = 1; i<=19; i++)
-                    for(int j = 1; j<=19; j++){
+                for(int i = 19; i >= 1; --i)
+                    for(int j = 1; j <= 19; ++j){
                         result[j][i] = sc.nextInt();
                     }
             } finally {

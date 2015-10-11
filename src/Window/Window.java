@@ -19,7 +19,7 @@ public class Window extends JFrame {
     public Window() throws IOException {
         JFrame f = new JFrame();
 
-        visibleImage =(Image) ImageIO.read(new File(Go.PATH+"\\src\\Window\\deleteme.jpg"));
+        visibleImage =(Image) ImageIO.read(new File("src/Window/deleteme.jpg"));//Go.PATH+"\\src\\Window\\deleteme.jpg"));
 
         //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //закрывать после закрытия
         f.setResizable(false);  //Держать открытым

@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
  */
 public class Go {
     //Пусть к папке данного проета
-    public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
+   // public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
 
-    private static String fileNameofBoard = PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
-    private static String fileNameofHelp =  PATH+"\\src\\help.txt";
+    private static String fileNameofBoard = "src/board.txt"; //PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
+    private static String fileNameofHelp =  "src/help.txt"; //PATH+"\\src\\help.txt";
 
     final static int WHITE = 2;
     final static int BLACK = 1;

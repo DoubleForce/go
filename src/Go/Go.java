@@ -2,6 +2,7 @@ package Go;
 
 import FileWorker.FileWorker;
 import Window.Window;
+import Window.LoginWindow;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -19,6 +20,9 @@ import java.util.regex.Pattern;
  */
 
 //Методы с большой буквы?
+    //Не давай писать всё с меленькой буквы, кроме аббривиатур. В случае, если в названии метода два слово, только второе
+    //писать с большой буквы.
+
 //Разобраться с public, private.
 //Бегать по массив только с помощью (x, y) или (x1, y1).
 //Не писать 20, есть константа Board_size
@@ -28,12 +32,11 @@ import java.util.regex.Pattern;
 
 public class Go {
     //Пусть к папке данного проета
-   // public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
-
+    // public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
 
 
     private static String fileNameofBoard = "src/board.txt"; //PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
-    private static String fileNameofHelp =  "src/help.txt"; //PATH+"\\src\\help.txt";
+    private static String fileNameofHelp = "src/help.txt"; //PATH+"\\src\\help.txt";
 
     final static int WHITE = 2;
     final static int BLACK = 1;
@@ -49,26 +52,29 @@ public class Go {
     }
 
 
-    public static void commandLine() throws IOException{ //Командная строка
+    public static void commandLine() throws IOException { //Командная строка
         Scanner sc = new Scanner(System.in);
         String command = "";
 
-        while (!command.equals("q")){
+        while (!command.equals("q")) {
             System.out.print("> ");
             command = sc.nextLine();
 
             if (command.equals("print"))
                 print();
 
-            else if (command.equals("window")){
+            else if (command.equals("window")) {
                 Window window = new Window();
-            }
-            else if (command.equals("help")){
+            } else if (command.equals("login")) {
+                LoginWindow loginwindow = new LoginWindow();
+                loginwindow.setVisible(true);
+            } else if (command.equals("help")) {
                 System.out.print(FileWorker.read(fileNameofHelp));
             }
+
             Pattern p = Pattern.compile("move");
             Matcher m = p.matcher(command);
-            if (m.find()){
+            if (m.find()) {
                 command = command.substring(4);
                 Scanner read = new Scanner(command);
                 int color = read.nextInt();
@@ -76,16 +82,16 @@ public class Go {
                 int y = read.nextInt();
                 System.out.println();
                 move(color, x, y);
-                //Думаю, что со цветом можно получше здесь сделать
+                //Думаю, что с0 цветом можно получше здесь сделать
             }
         }
     }
 
-    static class MyInteger{
+    static class MyInteger {
         int value;
     }
 
-    public static void move(int color,int x,int y){
+    public static void move(int color, int x, int y) {
         //Проверка корректности хода есть ли там даме и условие ко-борьбы
         //Снятие камней противоположного цвета у которых нет дамэ
         //Изменение доски
@@ -99,7 +105,7 @@ public class Go {
         int label = 3;
         //Нужно что - нибудь сделать с этим: cnt = 3?
 
-        int [][]  boardBuffer = new int[20][20];
+        int[][] boardBuffer = new int[20][20];
         for (int i = 1; i <= BOARD_SIZE; ++i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
                 boardBuffer[i][j] = board[i][j];
@@ -121,15 +127,6 @@ public class Go {
             }
         }
 
-    }
-
-    public static void print() {
-        for (int i = BOARD_SIZE; i>= 1; --i) {
-            for (int j = 1; j <= BOARD_SIZE; ++j) {
-                System.out.print(board[j][i]+" ");
-            }
-            System.out.println();
-        }
     }
 
     private static void DFS(int x, int y, int label, int color, MyInteger dameCount, int[][] boardBuffer) {
@@ -157,6 +154,15 @@ public class Go {
                     board[i][j] = EMPTY;
                 }
             }
+        }
+    }
+
+    public static void print() {
+        for (int i = BOARD_SIZE; i >= 1; --i) {
+            for (int j = 1; j <= BOARD_SIZE; ++j) {
+                System.out.print(board[j][i] + " ");
+            }
+            System.out.println();
         }
     }
 }

@@ -36,6 +36,51 @@ public class FileWorker {
        return result;
     }
 
+    public static int getUserInfo(String fileName,String login, String password) {
+        File file = new File(fileName);
+
+        int result = 1;
+
+        /*
+            0 -- Введён правильно логин и пароль
+            1 -- Такого пользователя не существует
+            2 -- Пароль введён неправильно
+         */
+
+        String[] database = new String[100];
+
+        String line = "";
+
+        try {
+            //Объект для чтения файла в буфер
+            Scanner sc = new Scanner(new FileReader(file.getAbsoluteFile()));
+            try {
+                //В цикле построчно считываем файл
+                line = sc.nextLine();
+                while(!(line.equals("end"))) {
+                    if (login.equals(line.substring(0, line.indexOf(" ")))) {
+                        if (password.equals(line.substring(line.indexOf(" ") + 1))) {
+                            result = 0;
+                            break;
+                        }
+                        else {
+                            result = 2;
+                            break;
+                        }
+                    }
+                    line = sc.nextLine();
+                }
+            } finally {
+                //Также не забываем закрыть файл
+                sc.close();
+            }
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result;
+    }
+
     public static String read(String fileName) throws FileNotFoundException {
         File file = new File(fileName);
 
@@ -80,7 +125,7 @@ public class FileWorker {
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
 
             try {
-                //Записываем текст у файл
+                //Записываем текст в файл
                 out.print(text);
             } finally {
                 //После чего мы должны закрыть файл

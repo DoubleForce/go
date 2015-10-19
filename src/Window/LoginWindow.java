@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 
 public class LoginWindow extends JFrame {
 
+    private static String fileNameofDataBase = "src/Window/users.txt";
+
     /* Для того, чтобы впоследствии обращаться к содержимому текстовых полей, рекомендуется сделать их членами класса окна */
     JTextField loginField;
     JPasswordField passwordField;
@@ -40,7 +42,7 @@ public class LoginWindow extends JFrame {
         ok.addMouseListener(new MouseAdapter() {  // Слушатель кнопки ОК
 
             public void mouseClicked(MouseEvent event) {
-                switch(FileWorker.getUserInfo("src/window/users.txt",loginField.getText(),passwordField.getText())){
+                switch(FileWorker.getUserInfo(fileNameofDataBase,loginField.getText(),passwordField.getText())){
                     case 0: JOptionPane.showMessageDialog(null, "Вход выполнен");
                             setVisible(false);
                             //Рабочее окно входа как объект вида mainWindow(String loginField.getText());

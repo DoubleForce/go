@@ -1,5 +1,7 @@
 package FileWorker;
 
+import Go.Go;
+
 import java.io.*;
 import java.util.Scanner;
 
@@ -11,7 +13,6 @@ public class FileWorker {
         File file = new File(fileName);
         int[][] result = new int[20][20];
         for(int j = 0; j<20; j++){for(int i = 0; i<20; i++){result[i][j]=0;}}
-        //Этот спец. объект для построения строки
 
         exists(fileName);
 
@@ -20,10 +21,18 @@ public class FileWorker {
             Scanner sc = new Scanner(new FileReader(file.getAbsoluteFile()));
             try {
                 //В цикле построчно считываем файл
-                for(int i = 19; i >= 1; --i)
-                    for(int j = 1; j <= 19; ++j){
-                        result[j][i] = sc.nextInt();
+                String line = sc.nextLine();
+                for(int i = Go.BOARD_SIZE; i >= 1; --i) {
+                    line = sc.nextLine();
+                    for (int j = 1; j <= Go.BOARD_SIZE; ++j) {
+                        if (line.substring(3+2*(j-1),4+2*(j-1)).equals("·"))
+                            result[j][i] = 0;
+                        else if (line.substring(3+2*(j-1),4+2*(j-1)).equals("•"))
+                            result[j][i] = 1;
+                        else if (line.substring(3+2*(j-1),4+2*(j-1)).equals("o"))
+                            result[j][i] = 2;
                     }
+                }
             } finally {
                 //Также не забываем закрыть файл
                 sc.close();
@@ -34,6 +43,44 @@ public class FileWorker {
 
         //Возвращаем полученный текст с файла
        return result;
+    }
+
+    public static void writeMove(int color,int x, int y) throws IOException{
+        File file = new File(Go.fileNameofBoard);
+        StringBuilder sb = new StringBuilder();
+        exists(Go.fileNameofBoard);
+        try {
+            //Объект для чтения файла в буфер
+            BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+            try {
+                //В цикле построчно считываем файл
+                String s;
+                int i = Go.BOARD_SIZE+1;
+                while ((s = in.readLine()) != null) {
+                    if (i == y){
+                        if (color == Go.EMPTY)
+                            s = s.substring(0,3+2*(x-1)) + '·' + s.substring(4+2*(x-1));
+                        if (color == Go.BLACK)
+                            s = s.substring(0,3+2*(x-1)) + '•' + s.substring(4+2*(x-1));
+                        else if (color == Go.WHITE)
+                            s = s.substring(0,3+2*(x-1)) + 'o' + s.substring(4+2*(x-1));
+                    }
+                    sb.append(s);
+                    sb.append("\n");
+                    i--;
+                }
+            } finally {
+                //Также не забываем закрыть файл
+                in.close();
+            }
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        write(Go.fileNameofBoard,sb.toString());
+    }
+
+    public static void clearBoard() throws IOException{
+        write(Go.fileNameofBoard,read(Go.fileNameofClearBoard).toString());
     }
 
     public static int getUserInfo(String fileName,String login, String password) {
@@ -154,5 +201,34 @@ public class FileWorker {
         sb.append(oldFile);
         sb.append(newText);
         write(nameFile, sb.toString());
+    }
+
+    public static int parseX(String Coordinates) throws IOException{
+        int x = 0;
+         if (Coordinates.substring(0,1).equals("A")) x = 1;
+        else if (Coordinates.substring(0,1).equals("B")) x = 2;
+        else if (Coordinates.substring(0,1).equals("C")) x = 3;
+        else if (Coordinates.substring(0,1).equals("D")) x = 4;
+        else if (Coordinates.substring(0,1).equals("E")) x = 5;
+        else if (Coordinates.substring(0,1).equals("F")) x = 6;
+        else if (Coordinates.substring(0,1).equals("G")) x = 7;
+        else if (Coordinates.substring(0,1).equals("H")) x = 8;
+        else if (Coordinates.substring(0,1).equals("J")) x = 9;
+        else if (Coordinates.substring(0,1).equals("K")) x = 10;
+        else if (Coordinates.substring(0,1).equals("L")) x = 11;
+        else if (Coordinates.substring(0,1).equals("M")) x = 12;
+        else if (Coordinates.substring(0,1).equals("N")) x = 13;
+        else if (Coordinates.substring(0,1).equals("O")) x = 14;
+        else if (Coordinates.substring(0,1).equals("P")) x = 15;
+        else if (Coordinates.substring(0,1).equals("Q")) x = 16;
+        else if (Coordinates.substring(0,1).equals("R")) x = 17;
+        else if (Coordinates.substring(0,1).equals("S")) x = 18;
+        else if (Coordinates.substring(0,1).equals("T")) x = 19;
+        return x;
+    }
+    public static int parseY(String Coordinates) throws IOException{
+        int y = 0;
+        y = Integer.parseInt(Coordinates.substring(1));
+        return y;
     }
 }

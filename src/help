@@ -5,6 +5,18 @@ q
 print
     to show the board position
 ------------------------------------
+board
+    to show the board massive
+------------------------------------
+clear
+    to clear the board
+------------------------------------
+start
+    to start edition of the board
+    write coordinates [A1-T19]
+stop
+    to stop edition of the board
+------------------------------------
 move [type of stone: 2,1,0] [x] [y]
     to make a move
 ------------------------------------
@@ -13,4 +25,5 @@ window
 ------------------------------------
 login
     open login window
+------------------------------------
 ================================

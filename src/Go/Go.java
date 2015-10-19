@@ -35,13 +35,14 @@ public class Go {
     // public static String PATH = "C://Users/Avdonin/IdeaProjects/iGo"; // "C:\\Users\\Avdonin\\IdeaProjects\\iGo"
 
 
-    private static String fileNameofBoard = "src/board.txt"; //PATH+"\\src\\board.txt"; // C://users/avdonin/ideaprojects/go/src/board.txt
-    private static String fileNameofHelp = "src/help.txt"; //PATH+"\\src\\help.txt";
+    public static String fileNameofBoard = "src/board";
+    public static String fileNameofClearBoard = "src/cleanBoard";
+    public static String fileNameofHelp = "src/help";
 
-    final static int WHITE = 2;
-    final static int BLACK = 1;
-    final static int EMPTY = 0;
-    final static int BOARD_SIZE = 19;
+    public static int WHITE = 2;
+    public static int BLACK = 1;
+    public static int EMPTY = 0;
+    public static int BOARD_SIZE = 19;
 
     public static int[][] board = new int[20][20];
 
@@ -61,15 +62,55 @@ public class Go {
             command = sc.nextLine();
 
             if (command.equals("print"))
+                System.out.println(FileWorker.read(fileNameofBoard));
+
+            else if (command.equals("board")) {
                 print();
+            }
 
             else if (command.equals("window")) {
                 Window window = new Window();
-            } else if (command.equals("login")) {
+            }
+
+            else if (command.equals("login")) {
                 LoginWindow loginwindow = new LoginWindow();
                 loginwindow.setVisible(true);
-            } else if (command.equals("help")) {
+            }
+
+            else if (command.equals("help")) {
                 System.out.print(FileWorker.read(fileNameofHelp));
+            }
+
+            else if (command.equals("clear")) {
+                FileWorker.clearBoard();
+                for (int i = 1; i<=BOARD_SIZE;i++)
+                    for(int j = 1; j<=BOARD_SIZE;j++)
+                        board[i][j] = 0;
+                System.out.println("The board is clean");
+            }
+
+            else if (command.equals("start")) {
+                boolean isBlackMove = true;
+                while(true){
+                    System.out.println(FileWorker.read(fileNameofBoard));
+                    if (isBlackMove) {
+                        System.out.print("Black> ");
+                        command = sc.nextLine();
+                        if (command.equals("stop")||command.equals("q"))
+                            break;
+                        move(1, FileWorker.parseX(command), FileWorker.parseY(command));
+
+                    }
+                    else {
+                        System.out.print("White> ");
+                        command = sc.nextLine();
+                        if (command.equals("stop")||command.equals("q"))
+                            break;
+
+                        move(2, FileWorker.parseX(command), FileWorker.parseY(command));
+                    }
+                    isBlackMove = !isBlackMove;
+                }
             }
 
             Pattern p = Pattern.compile("move");
@@ -82,7 +123,7 @@ public class Go {
                 int y = read.nextInt();
                 System.out.println();
                 move(color, x, y);
-                //Думаю, что с0 цветом можно получше здесь сделать
+                //Думаю, что со цветом можно получше здесь сделать
             }
         }
     }
@@ -91,15 +132,14 @@ public class Go {
         int value;
     }
 
-    public static void move(int color, int x, int y) {
+    public static void move(int color, int x, int y) throws IOException{
         //Проверка корректности хода есть ли там даме и условие ко-борьбы
         //Снятие камней противоположного цвета у которых нет дамэ
         //Изменение доски
         if (board[x][y] != EMPTY) {
             System.out.println("This point is occupied!");
         } else {
-            board[x][y] = color;//
-            System.out.println(x + " " + y);
+            board[x][y] = color;
         }
 
         int label = 3;
@@ -126,7 +166,7 @@ public class Go {
                 }
             }
         }
-
+        FileWorker.writeMove(color,x,y); //Меняет файл доски после сделанного хода и всех проверок
     }
 
     private static void DFS(int x, int y, int label, int color, MyInteger dameCount, int[][] boardBuffer) {
@@ -147,11 +187,12 @@ public class Go {
         //Если группа камней не иммет даме, то удаляем.
     }
 
-    private static void DeleteStones(int[][] boardBuffer, int label) {
+    private static void DeleteStones(int[][] boardBuffer, int label) throws IOException{
         for (int i = 1; i <= BOARD_SIZE; ++i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
                 if (boardBuffer[i][j] == label) {
                     board[i][j] = EMPTY;
+                    FileWorker.writeMove(EMPTY,i,j);
                 }
             }
         }

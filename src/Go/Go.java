@@ -25,7 +25,8 @@ import java.util.regex.Pattern;
 //Функция подсчёта очков
 //Функция, которая проверяет, можно ли ходить (чтобы даме не обнулялись)
 //Сделать pass
-
+//В move есть FileWorker.writeMove - этот writeMove сделан не рационально (+ он есть в DeleteStones).
+//+ в доске может съесться
 
 public class Go {
     //Пусть к папке данного проета
@@ -147,6 +148,8 @@ public class Go {
             return color;
         }
 
+        board[x][y] = color;
+
         int label = 3;
         //Нужно что - нибудь сделать с этим: cnt = 3?
 
@@ -174,13 +177,14 @@ public class Go {
         }
 
 
+
         for (int i = 1; i <= BOARD_SIZE; ++i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
                 boardBuffer[i][j] = board[i][j];
             }
         }
 
-        /*if (countDeletedStones == 0) {
+        if (countDeletedStones == 0) {
             MyInteger dameCount = new MyInteger();
             dameCount.value = 0;
             DFS(x, y, 3, color, dameCount, boardBuffer);
@@ -192,7 +196,7 @@ public class Go {
         }
 
 
-        board[x][y] = color;
+        /*board[x][y] = color;
 
 
         lastMove.x = x;
@@ -204,6 +208,7 @@ public class Go {
             lastMove.maybeKo = false;
         }
 */
+
         FileWorker.writeMove(color,x,y); //Меняет файл доски после сделанного хода и всех проверок
 
         return 3 - color;
@@ -224,7 +229,7 @@ public class Go {
                 }
             }
         }
-        //Если группа камней не иммет даме, то удаляем.
+        //Если группа камней не имеет даме, то удаляем.
     }
 
     private static int DeleteStones(int[][] boardBuffer, int label) throws IOException{

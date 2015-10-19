@@ -204,31 +204,14 @@ public class FileWorker {
     }
 
     public static int parseX(String Coordinates) throws IOException{
-        int x = 0;
-         if (Coordinates.substring(0,1).equals("A")) x = 1;
-        else if (Coordinates.substring(0,1).equals("B")) x = 2;
-        else if (Coordinates.substring(0,1).equals("C")) x = 3;
-        else if (Coordinates.substring(0,1).equals("D")) x = 4;
-        else if (Coordinates.substring(0,1).equals("E")) x = 5;
-        else if (Coordinates.substring(0,1).equals("F")) x = 6;
-        else if (Coordinates.substring(0,1).equals("G")) x = 7;
-        else if (Coordinates.substring(0,1).equals("H")) x = 8;
-        else if (Coordinates.substring(0,1).equals("J")) x = 9;
-        else if (Coordinates.substring(0,1).equals("K")) x = 10;
-        else if (Coordinates.substring(0,1).equals("L")) x = 11;
-        else if (Coordinates.substring(0,1).equals("M")) x = 12;
-        else if (Coordinates.substring(0,1).equals("N")) x = 13;
-        else if (Coordinates.substring(0,1).equals("O")) x = 14;
-        else if (Coordinates.substring(0,1).equals("P")) x = 15;
-        else if (Coordinates.substring(0,1).equals("Q")) x = 16;
-        else if (Coordinates.substring(0,1).equals("R")) x = 17;
-        else if (Coordinates.substring(0,1).equals("S")) x = 18;
-        else if (Coordinates.substring(0,1).equals("T")) x = 19;
-        return x;
+        char ch = Coordinates.charAt(0);
+        if (ch < 'I') {
+            return ch - 'A' + 1;
+        } else {
+            return ch - 'A';
+        }
     }
     public static int parseY(String Coordinates) throws IOException{
-        int y = 0;
-        y = Integer.parseInt(Coordinates.substring(1));
-        return y;
+        return Integer.parseInt(Coordinates.substring(1));
     }
 }

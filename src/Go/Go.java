@@ -9,15 +9,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/*
-    Обрати внимание на комментарий к PATH. Я не знаю путь к твоему файлу, но когда он появится (ты его сейчас исправишь),
-    я буду оставлять его в комментиях перед отправкой, как оставлен сейчас путь к папке моего проекта, чтобы когда ты
-    обновлял проект, тебе было нужно просто скопировать путь из комментария. Таким образом, если ты первый раз это
-    читаешь, то не нужно трогать комментарий, в противном случае перед тем как отправить версию тебе нужно будет
-    убедиться, что в комментарии мой путь. Такой взаимный обмен.
-
-    Запустив програамму введи help
- */
 
 //Методы с большой буквы?
     //Не давай писать всё с меленькой буквы, кроме аббривиатур. В случае, если в названии метода два слово, только второе
@@ -28,6 +19,12 @@ import java.util.regex.Pattern;
 //Не писать 20, есть константа Board_size
 //Integer нельзя передать по ссылке?
 //При неправильном вводе хода программа прерывается.
+//Нерацильонально по времени ходы записывать в файл?
+//Если в move вводить бред, то прога вылетит
+//Формат move и ходов в start различается
+//Функция подсчёта очков
+//Функция, которая проверяет, можно ли ходить (чтобы даме не обнулялись)
+//Сделать pass
 
 
 public class Go {
@@ -38,7 +35,7 @@ public class Go {
     public static String fileNameofBoard = "src/board";
     public static String fileNameofClearBoard = "src/cleanBoard";
     public static String fileNameofHelp = "src/help";
-
+    public static Move lastMove = new Move();
     public static int WHITE = 2;
     public static int BLACK = 1;
     public static int EMPTY = 0;
@@ -90,26 +87,25 @@ public class Go {
             }
 
             else if (command.equals("start")) {
-                boolean isBlackMove = true;
-                while(true){
+                int colorMove = BLACK;
+                while(true) {
                     System.out.println(FileWorker.read(fileNameofBoard));
-                    if (isBlackMove) {
-                        System.out.print("Black> ");
-                        command = sc.nextLine();
-                        if (command.equals("stop")||command.equals("q"))
-                            break;
-                        move(1, FileWorker.parseX(command), FileWorker.parseY(command));
 
+                    if (colorMove == BLACK) {
+                        System.out.print("Black> ");
                     }
                     else {
                         System.out.print("White> ");
-                        command = sc.nextLine();
-                        if (command.equals("stop")||command.equals("q"))
-                            break;
-
-                        move(2, FileWorker.parseX(command), FileWorker.parseY(command));
                     }
-                    isBlackMove = !isBlackMove;
+
+                    command = sc.nextLine();
+                    if (command.equals("stop") || command.equals("q")) {
+                        break;
+                    }
+
+
+
+                    colorMove = move(colorMove, FileWorker.parseX(command), FileWorker.parseY(command));
                 }
             }
 
@@ -132,14 +128,23 @@ public class Go {
         int value;
     }
 
-    public static void move(int color, int x, int y) throws IOException{
+    static class Move {
+        int x;
+        int y;
+        boolean maybeKo;
+
+        Move() {
+            maybeKo = false;
+        }
+    }
+
+    public static int move(int color, int x, int y) throws IOException{
         //Проверка корректности хода есть ли там даме и условие ко-борьбы
         //Снятие камней противоположного цвета у которых нет дамэ
         //Изменение доски
         if (board[x][y] != EMPTY) {
             System.out.println("This point is occupied!");
-        } else {
-            board[x][y] = color;
+            return color;
         }
 
         int label = 3;
@@ -153,6 +158,7 @@ public class Go {
         }
 
 
+        int countDeletedStones = 0;
         for (int i = 1; i <= BOARD_SIZE; ++i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
                 if (boardBuffer[i][j] == (color % 2) + 1) {
@@ -160,13 +166,47 @@ public class Go {
                     dameCount.value = 0;
                     DFS(i, j, label, (color % 2) + 1, dameCount, boardBuffer);
                     if (dameCount.value == 0) {
-                        DeleteStones(boardBuffer, label);
+                       countDeletedStones += DeleteStones(boardBuffer, label);
                     }
                     ++label;
                 }
             }
         }
+
+
+        for (int i = 1; i <= BOARD_SIZE; ++i) {
+            for (int j = 1; j <= BOARD_SIZE; ++j) {
+                boardBuffer[i][j] = board[i][j];
+            }
+        }
+
+        /*if (countDeletedStones == 0) {
+            MyInteger dameCount = new MyInteger();
+            dameCount.value = 0;
+            DFS(x, y, 3, color, dameCount, boardBuffer);
+            if (dameCount.value == 0) {
+                System.out.println("Dame count is 0!");
+                board[x][y] = EMPTY;
+                return color;
+            }
+        }
+
+
+        board[x][y] = color;
+
+
+        lastMove.x = x;
+        lastMove.y = y;
+        if (countDeletedStones == 1) {
+            //Сделать в стиле ООП
+            lastMove.maybeKo = true;
+        } else {
+            lastMove.maybeKo = false;
+        }
+*/
         FileWorker.writeMove(color,x,y); //Меняет файл доски после сделанного хода и всех проверок
+
+        return 3 - color;
     }
 
     private static void DFS(int x, int y, int label, int color, MyInteger dameCount, int[][] boardBuffer) {
@@ -187,15 +227,19 @@ public class Go {
         //Если группа камней не иммет даме, то удаляем.
     }
 
-    private static void DeleteStones(int[][] boardBuffer, int label) throws IOException{
+    private static int DeleteStones(int[][] boardBuffer, int label) throws IOException{
+        int ans = 0;
         for (int i = 1; i <= BOARD_SIZE; ++i) {
             for (int j = 1; j <= BOARD_SIZE; ++j) {
                 if (boardBuffer[i][j] == label) {
+                    ++ans;
                     board[i][j] = EMPTY;
                     FileWorker.writeMove(EMPTY,i,j);
                 }
             }
         }
+
+        return ans;
     }
 
     public static void print() {

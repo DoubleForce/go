@@ -1,3 +1,4 @@
+\\ПРИВЕТ ЗЕМЛЕ
 package Go;
 
 import FileWorker.FileWorker;

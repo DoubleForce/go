@@ -61,9 +61,9 @@ public class FileWorker {
                         if (color == Go.EMPTY)
                             s = s.substring(0,3+2*(x-1)) + '·' + s.substring(4+2*(x-1));
                         if (color == Go.BLACK)
-                            s = s.substring(0,3+2*(x-1)) + '•' + s.substring(4+2*(x-1));
+                            s = s.substring(0,3+2*(x-1)) + '●' + s.substring(4+2*(x-1));
                         else if (color == Go.WHITE)
-                            s = s.substring(0,3+2*(x-1)) + 'o' + s.substring(4+2*(x-1));
+                            s = s.substring(0,3+2*(x-1)) + '○' + s.substring(4+2*(x-1));
                     }
                     sb.append(s);
                     sb.append("\n");
